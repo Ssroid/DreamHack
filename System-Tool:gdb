@@ -1,0 +1,18 @@
+이전까지 gdb 설치 
+
+진행>
+
+gdb / python argv
+phyton이 진행이 안됀다. python을 한번 설치해보자 
+
+pwntools 로 이동해서 python3 와 pwntools 설치과정을 보자.
+왜 순서가 앞으로 갔다 뒤로 갔다하는지 모르겠다.
+
+$ r $(python3 -c 'print("\xff"*100)')
+ 입력돼는 모양이다 .
+ 
+$ r $(python3 -c 'print("\xff"*100)') <<< $(python3 -c 'print("dreamhack")')
+작동이 돼는듯하지만 오류가 쫌있다. 일단은 무시하자.
+
+
+
