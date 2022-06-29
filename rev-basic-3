@@ -43,3 +43,14 @@ for i in range(0,24) :
     print(ch, end='') # 개행문자없이 출력하는 방법
 ------
 $ I_am_X0_xo_Xor_eXcit1ng 
+
+
+#### 다른사람풀이
+enc_keys = ['0x49', '0x60', '0x67', '0x74', '0x63', '0x67', '0x42', '0x66', '0x80', '0x78', '0x69', '0x69', '0x7B', '0x99', '0x6D', '0x88', '0x68', '0x94', '0x9F', '0x8D', '0x4D', '0xA5', '0x9D', '0x45']
+plain_keys = []
+for index, key in enumerate(enc_keys):   #enumerate 를 하면은 index를 추가해줘서 마치 C언어로 i와 해당 값을 같이 쓸수있다. 편함
+    value = (int(key, 16) - 2 * index) ^ index
+    plain_keys.append(chr(value))
+
+print (''.join(plain_keys))
+
